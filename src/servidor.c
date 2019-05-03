@@ -4,7 +4,7 @@ char* pathS = "files/stocks";
 char* pathV = "files/vendas";
 int stocks;
 int vendas;
-
+/*
 int menu () {
     int opt;
     printf("\n========Servidor de Vendas========\n");
@@ -17,7 +17,7 @@ int menu () {
     printf("Escolha opção: ");
     scanf("%d", &opt);
     return opt;
-}
+}*/
 
 void adicionar_stock () {
     int cod, st; Stock s = init_stock();
@@ -64,12 +64,31 @@ void remove_stock() {
 }
 
 int main (int argc, char* argv[]) {
-    int opt = 99;
+/*
+    if(mkfifo("return", 0666) == -1)  
+        perror("Pipe failed...");
+*/
+	char buf[1024];
+    //int opt = 99;
+    int n;
+	int cliente = open("cliente", O_RDONLY);
+    //int send = open("return", O_WRONLY);
 
+    while ((n = read(cliente, buf, 1024))) {
+        write(1, buf, n);
+        //sprintf(s, "Enviei -> %d", i++);
+        //write(received, s, strlen(s));
+    }
+
+    close(cliente);
+    //close(send);
+
+    /*
     stocks = open(pathS, O_CREAT);
     close(stocks);
     vendas = open(pathV, O_CREAT);
     close(vendas);
+    int fd = open("fifo",O_WRONLY);
 
     while (opt!=0) {
         opt = menu();
@@ -87,7 +106,7 @@ int main (int argc, char* argv[]) {
             default: 
                     break;
         }
-    }
+    }*/
 
     return 0;
 }

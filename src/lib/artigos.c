@@ -56,7 +56,7 @@ void art_info (Artg a) {
 } 
   
 void print_artigos () {
-    int n, i = 1; Artg a = init_artigo();
+    int n; Artg a = init_artigo();
     readA = open(pathAr, O_RDONLY);
     lseek(readA, 0, SEEK_SET); 
     while ((n = read(readA, a, sizeof(struct artg)))) {

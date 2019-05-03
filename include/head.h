@@ -1,6 +1,8 @@
 #ifndef __HEAD__
 #define __HEAD__
 
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
