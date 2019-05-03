@@ -48,7 +48,7 @@ void print_stock() {
     while ((n = read(readSt, a, sizeof(struct stock)))) {
         if(a->art != 0)
             printf("Artigo: %d - Stock: %d\n", a->art, a->qtd);
-        lseek(readSt, i++ * sizeof(struct stock), SEEK_SET);
+        lseek(readSt, 0, SEEK_CUR);
     }
     close(readSt);
     free(a);

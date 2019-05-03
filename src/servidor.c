@@ -19,33 +19,49 @@ int menu () {
     return opt;
 }*/
 
-void adicionar_stock () {
-    int cod, st; Stock s = init_stock();
-    printf("========Adicionar Stock\n");
-    printf("Codigo do  artigo: ");
-    scanf("%d", &cod);  
-    Artg a = search_artigo (cod);  
-    if (a->cod !=0 ) {
-        printf("Stock: ");
-        scanf("%d", &st);
-        s->art = a->cod;
-        s->qtd = st;
-        add_stock(s);
-    } else
-        printf("Não existem artigos com esse código\n");
-    free(s);
-    free(a);
+int read_client (int *input, char *buf) {
+    char *token; int i = 0;
+    token = strtok(buf, DELIM);
+    do {
+        input[i++] = atoi(token);
+        token = strtok(NULL, DELIM);
+    } while (token != NULL);
+    return i;
 }
 
-void show_artigo() {
-    int cod;
-    printf("Codigo do Artigo: ");
-    scanf("%d", &cod);  
+void adicionar_stock (int cod, int qtd) {
+    Stock s = search_stock(cod);
+    if (s->art == 0) {
+        Artg a = search_artigo (cod);  
+        if (a->cod !=0 ) {
+            s->art = cod;
+            s->qtd = qtd;
+            add_stock(s);
+        } 
+        free(a);
+    } else {
+        s->qtd += qtd;
+        add_stock(s);
+    }
+    free(s);
+}
+
+void show_artigo(int cod) {
     Artg a = search_artigo (cod);  
     if (a->cod !=0 )
         art_info(a);
-    else
-        printf("Não existem artigos com esse código\n");
+    free(a);
+}
+
+void show_stock(int cod) {
+    Artg a = search_artigo (cod);   
+    if (a->cod != 0 ){ 
+        char out[128];
+        Stock s = search_stock (a->cod); 
+        sprintf(out, "Stock -> %d Preco -> %f\n", s->qtd, a->preco);
+        write(1, out, strlen(out));
+        free(s);
+    }
     free(a);
 }
 
@@ -68,13 +84,29 @@ int main (int argc, char* argv[]) {
     if(mkfifo("return", 0666) == -1)  
         perror("Pipe failed...");
 */
-	char buf[1024];
+	char buf[1024], s[25];
     //int opt = 99;
-    int n;
+    int n, input_size, input[2];
 	int cliente = open("cliente", O_RDONLY);
     //int send = open("return", O_WRONLY);
 
+    stocks = open(pathS, O_CREAT);
+    close(stocks);
+    vendas = open(pathV, O_CREAT);
+    close(vendas);
+
     while ((n = read(cliente, buf, 1024))) {
+        input_size = read_client(input, buf);
+        sprintf(s, "Input size -> %d\n", input_size);
+        switch (input_size) {
+            case 1: show_stock(input[0]);
+                    break;
+            case 2: adicionar_stock(input[0], input[1]);
+                    break;
+            default: 
+                    break;
+        }
+        write(1, s, strlen(s));
         write(1, buf, n);
         //sprintf(s, "Enviei -> %d", i++);
         //write(received, s, strlen(s));
@@ -83,11 +115,9 @@ int main (int argc, char* argv[]) {
     close(cliente);
     //close(send);
 
+    
+ 
     /*
-    stocks = open(pathS, O_CREAT);
-    close(stocks);
-    vendas = open(pathV, O_CREAT);
-    close(vendas);
     int fd = open("fifo",O_WRONLY);
 
     while (opt!=0) {
