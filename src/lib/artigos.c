@@ -27,7 +27,8 @@ int get_num_art () {
     Artg a = init_artigo();
     lseek(readA, 0, SEEK_SET); 
     while ((n = read(readA, a, sizeof(struct artg)))) {
-        lseek(readA, cod++ * sizeof(struct artg), SEEK_SET);
+        cod++;
+        lseek(readA, 0, SEEK_CUR);
     }
     free(a);
     close(readA);
@@ -60,7 +61,7 @@ void print_artigos () {
     lseek(readA, 0, SEEK_SET); 
     while ((n = read(readA, a, sizeof(struct artg)))) {
         art_info(a);
-        lseek(readA, i++ * sizeof(struct artg), SEEK_SET);
+        lseek(readA, 0, SEEK_CUR);
     }
     close(readA);
     free(a);
