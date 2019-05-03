@@ -48,9 +48,9 @@ void mod_art (Artg a) {
 }
 
 void art_info (Artg a) {
-    //char* nome = strdup(get_string(a->nome));
+    char* nome = strdup(get_string(a->nome));
     printf("Codigo: %d ", a->cod);
-    printf("Nome: %d ", a->nome);
+    printf("Nome: %s ", nome);
     printf("Preço: %f\n", a->preco);
 } 
   

@@ -1,7 +1,7 @@
 #include "../include/head.h"
 
 char* pathA = "files/artigos";
-char* pathS = "files/strings";
+char* pathS = "files/strings.txt";
 int artigos;
 int strings;
 
@@ -13,15 +13,11 @@ void help() {
 }
 
 void add_artigo (char* buf) {
-    int id; char *token; char* str;
-    token = strtok(NULL, DELIM);
+    int id; char *nome, str[45]; 
+    nome = strtok(NULL, DELIM);
     // strings 
-    str = malloc (strlen(token) * sizeof(char));
-    strcpy(str, token);
-    printf("str -> %s\n", str);
-    id = get_num_str(str);
-    string_to_file(str);
-    free(str);
+    id = get_num_str();
+    string_to_file(nome);
     // artigo
     Artg a = init_artigo();
     a->cod = get_num_art();
@@ -29,7 +25,7 @@ void add_artigo (char* buf) {
     a->preco = atof(strtok(NULL, DELIM));
     artigo_to_file(a); 
     free(a);
-    sprintf(str, "Artigo -> %d\n", id);
+    sprintf(str, "Artigo -> %d\n", a->cod);
     write(1, str, strlen(str));
 }
 
@@ -40,7 +36,7 @@ void alt_nome (char* buf) {
     if (a->cod != 0 ) {
         nome = strtok(NULL, DELIM);
         // strings 
-        id = get_num_str(nome);
+        id = get_num_str();
         string_to_file(nome);
         a->nome = id;
         mod_art(a);
@@ -52,7 +48,6 @@ void alt_nome (char* buf) {
 void alt_preco (char* buf) {
     int cod; char* out = "Não existem artigos com esse código\n";
     cod = atoi(strtok(NULL, DELIM));
-    printf("Cod -> %d\n", cod);
     Artg a = search_artigo (cod);  
     if (a->cod != 0 ) {
         a->preco = atof(strtok(NULL, DELIM));
@@ -98,7 +93,7 @@ int main (int argc, char* argv[]) {
                     break;
             case 'p': alt_preco(buf);
                     break;
-            case 's': print_string();
+            case 's': print_artigos();
                     break;
             case '?': help();
                     break;

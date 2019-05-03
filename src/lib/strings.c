@@ -1,55 +1,71 @@
 #include "../../include/head.h"
 
-char* pathSr = "files/strings";
+char* pathSr = "files/strings.txt";
 int readS;
 int writeS;
 
-void string_to_file (char* str) {
+void string_to_file (char* nome) {
     writeS = open(pathSr, O_APPEND | O_WRONLY);
-    write(writeS, str, sizeof(char));
+    char* str = malloc ((strlen(nome) * sizeof(char)));
+    sprintf(str, "%s\n", nome);
+    write(writeS, str, strlen(str));
+    free(str);
     close(writeS);
 }
 
 int get_num_str () {
-    int cod = 1, n; char* s = NULL;
+    int cod = 1, n; char s[1024];
     readS = open(pathSr, O_RDONLY);
     lseek(readS, 0, SEEK_SET); 
-    while ((n = read(readS, s, sizeof(char)))) {
-        lseek(readS, cod++ * sizeof(char), SEEK_SET);
+    while ((n = readln(readS, s, 1024))) {
+        cod++;
+        lseek(readS, 0, SEEK_CUR);
     }
-    free(s);
     close(readS);
     return cod;
 }
-
+/*
 char* search_string (int cod) {
-    char* a = NULL;
+    char a[1024];
     readS = open(pathSr, O_RDONLY);
-    lseek(readS, (cod-1) * sizeof(char), SEEK_SET);
-    read(readS, a, sizeof(char));
+    lseek(readS, 0, SEEK_SET); 
+    while ((n = readln(readS, s, 1024))) {
+        if (i == id) {
+            r = strdup(s);
+            break;
+        }
+        i++;
+        lseek(readS, 0, SEEK_CUR);
+    }
     close(readS);
     return a;
-}
+}*/
 
 char* get_string (int id) {
-    char* s = NULL;
+    char s[1024]; int i = 1;
     readS = open(pathSr, O_RDONLY);
     int n; char* r = "String not found";
-    lseek(readS, (id-1) * sizeof(char), SEEK_SET);
-    if ((n = read(readS, s, sizeof(char))))
-        r = strdup(s);
+    lseek(readS, 0, SEEK_SET); 
+    while ((n = readln(readS, s, 1024))) {
+        if (i == id) {
+            r = strdup(s);
+            break;
+        }
+        i++;
+        lseek(readS, 0, SEEK_CUR);
+    }
     close(readS);
     return r;
 }
 
 void print_string() {
-    int n, i = 1; char* a = NULL;
+    int n; char a[1024];
     readS = open(pathSr, O_RDONLY);
     lseek(readS, 0, SEEK_SET); 
     printf("========Strings\n");
-    while ((n = read(readS, a, sizeof(char)))) {
+    while ((n = readln(readS, a, 1024))) {
         printf("String: %s\n", a);
-        lseek(readS, i++ * sizeof(char), SEEK_SET);
+        lseek(readS, 0, SEEK_CUR);
     }
     close(readS);
 }
