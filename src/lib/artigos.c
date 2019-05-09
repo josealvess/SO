@@ -23,7 +23,7 @@ Artg art_to_struct (char* s) {
 
 int get_num_art () {
     int cod = 1, n;
-    readA = open(pathAr, O_RDONLY);
+    readA = open(pathAr, O_RDONLY, 0777);
     Artg a = init_artigo();
     lseek(readA, 0, SEEK_SET); 
     while ((n = read(readA, a, sizeof(struct artg)))) {
@@ -36,13 +36,13 @@ int get_num_art () {
 }
 
 void artigo_to_file (Artg art) {
-    writeA = open(pathAr, O_APPEND | O_WRONLY);
+    writeA = open(pathAr, O_APPEND | O_WRONLY, 0777);
     write(writeA, art, sizeof(struct artg));
     close(writeA);
 }
 
 void mod_art (Artg a) {
-    readA = open(pathAr, O_RDWR);
+    readA = open(pathAr, O_RDWR, 0777);
     lseek(readA, (a->cod-1) * sizeof(struct artg), SEEK_SET);
     write(readA, a, sizeof(struct artg));
     close(readA);
@@ -60,7 +60,7 @@ void art_info (Artg a) {
   
 void print_artigos () {
     int n; Artg a = init_artigo();
-    readA = open(pathAr, O_RDONLY);
+    readA = open(pathAr, O_RDONLY, 0777);
     lseek(readA, 0, SEEK_SET); 
     while ((n = read(readA, a, sizeof(struct artg)))) {
         art_info(a);
@@ -72,7 +72,7 @@ void print_artigos () {
 
 Artg search_artigo (int cod) {
     Artg a = init_artigo();
-    readA = open(pathAr, O_RDONLY);
+    readA = open(pathAr, O_RDONLY, 0777);
     lseek(readA, (cod-1) * sizeof(struct artg), SEEK_SET);
     read(readA, a, sizeof(struct artg));
     close(readA);

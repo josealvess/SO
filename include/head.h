@@ -25,6 +25,20 @@ typedef struct stock {
     int qtd;
 } *Stock;
 
+typedef struct venda {
+    int art;
+    int qtd;
+    float preco;
+    int agreg;
+} *Venda;
+
+typedef struct agreg {
+    int art;
+    int qtd;
+    float preco;
+    struct agreg *prox;
+} *Agreg;
+
 ssize_t readln (int fildes, void *buf, size_t nbyte);
 
 //Artigos
@@ -34,6 +48,7 @@ void mod_art (Artg a);
 void art_info (Artg a);
 void print_artigos ();
 Artg search_artigo (int cod);
+void show_artigo(char* buf);
 int get_num_art ();
 //Strings
 char* str_to_str (char* s);
@@ -45,8 +60,14 @@ void print_string();
 //Stocks
 Stock init_stock();
 void add_stock (Stock s);
-void rm_stock (Stock s, int qtd);
 Stock search_stock (int cod);
 void print_stock();
+//Vendas
+Venda init_venda();
+void add_venda (Venda s);
+void update_venda (Venda v);
+void print_vendas();
+//agregador
+void agregador ();
 
 #endif

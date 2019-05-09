@@ -5,7 +5,7 @@ int readS;
 int writeS;
 
 void string_to_file (char* nome) {
-    writeS = open(pathSr, O_APPEND | O_WRONLY);
+    writeS = open(pathSr, O_APPEND | O_WRONLY, 0644);
     char* str = malloc ((strlen(nome) * sizeof(char)));
     sprintf(str, "%s\n", nome);
     write(writeS, str, strlen(str));
@@ -15,7 +15,7 @@ void string_to_file (char* nome) {
 
 int get_num_str () {
     int cod = 1, n; char s[1024];
-    readS = open(pathSr, O_RDONLY);
+    readS = open(pathSr, O_RDONLY, 0644);
     lseek(readS, 0, SEEK_SET); 
     while ((n = readln(readS, s, 1024))) {
         cod++;
@@ -43,7 +43,7 @@ char* search_string (int cod) {
 
 char* get_string (int id) {
     char s[1024]; int i = 1;
-    readS = open(pathSr, O_RDONLY);
+    readS = open(pathSr, O_RDONLY, 0644);
     int n; char* r = "String not found";
     lseek(readS, 0, SEEK_SET); 
     while ((n = readln(readS, s, 1024))) {
@@ -60,7 +60,7 @@ char* get_string (int id) {
 
 void print_string() {
     int n; char a[1024];
-    readS = open(pathSr, O_RDONLY);
+    readS = open(pathSr, O_RDONLY, 0644);
     lseek(readS, 0, SEEK_SET); 
     printf("========Strings\n");
     while ((n = readln(readS, a, 1024))) {

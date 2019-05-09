@@ -11,29 +11,15 @@ Stock init_stock() {
 }
 
 void add_stock (Stock s) {
-    readSt = open(pathSt, O_RDWR);
+    readSt = open(pathSt, O_RDWR, 0644);
     lseek(readSt, (s->art-1) * sizeof(struct stock), SEEK_SET);
     write(readSt, s, sizeof(struct stock));
     close(readSt);
 }
 
-void rm_stock (Stock s, int qtd) {
-    readSt = open(pathSt, O_RDWR);
-    lseek(readSt, (s->art-1) * sizeof(struct stock), SEEK_SET);
-    read(readSt, s, sizeof(struct stock));
-    if(s->qtd-qtd < 0)
-        printf("Quantidade indisponivel...\n");
-    else {
-        s->qtd -= qtd;
-        lseek(readSt, (s->art-1) * sizeof(struct stock), SEEK_SET);
-        write(readSt, s, sizeof(struct stock));
-    }
-    close(readSt);
-}
-
 Stock search_stock (int cod) {
     Stock a = init_stock();
-    readSt = open(pathSt, O_RDONLY);
+    readSt = open(pathSt, O_RDONLY, 0644);
     lseek(readSt, (cod-1) * sizeof(struct stock), SEEK_SET);
     read(readSt, a, sizeof(struct stock));
     close(readSt);
@@ -41,8 +27,8 @@ Stock search_stock (int cod) {
 }
 
 void print_stock() {
-    int n, i = 1; Stock a = init_stock();
-    readSt = open(pathSt, O_RDONLY);
+    int n; Stock a = init_stock();
+    readSt = open(pathSt, O_RDONLY, 0644);
     lseek(readSt, 0, SEEK_SET); 
     printf("========Stock\n");
     while ((n = read(readSt, a, sizeof(struct stock)))) {

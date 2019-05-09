@@ -56,32 +56,31 @@ void alt_preco (char* buf) {
         write(1, out, strlen(out));
     free(a);
 }
-/*
-void show_artigo() {
-    int cod;
-    printf("Codigo do Artigo: ");
-    scanf("%d", &cod);  
+
+void show_artigo(char* buf) {
+    char* out = "Não existem artigos com esse código\n";
+    int cod = atoi(strtok(NULL, DELIM));
     Artg a = search_artigo (cod);  
     if (a->cod != 0 )
         art_info(a);
     else
-        printf("Não existem artigos com esse código\n");
+        write(1, out, strlen(out));
     free(a);
-}*/
+}
 
 int main (int argc, char* argv[]) {
     int n = 1; char *token, opt; 
     char buf[1024];
 
-    artigos = open(pathA, O_CREAT);
+    artigos = open(pathA, O_CREAT, 0644);
     close(artigos);
-    strings = open(pathS, O_CREAT);
+    strings = open(pathS, O_CREAT, 0644);
     close(strings);
 
     while (n > 0) {
         
         write(1, PROMPT, PSIZE);
-        n = readln(0, buf, 1024);
+        while((n = readln(0, buf, 1024)) == -1);
         if (n > 0) {
             token = strtok(buf, DELIM);
             opt = *token;
@@ -94,6 +93,12 @@ int main (int argc, char* argv[]) {
             case 'p': alt_preco(buf);
                     break;
             case 's': print_artigos();
+                    break;
+            case 'v': print_vendas();
+                    break;
+            case 'f': show_artigo(buf);
+                    break;
+            case 'a': agregador();
                     break;
             case '?': help();
                     break;
