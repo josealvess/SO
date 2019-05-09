@@ -13,7 +13,7 @@ Venda init_venda() {
 }
 
 void add_venda (Venda v) {
-    readVd = open(pathVd, O_APPEND | O_WRONLY, 0644);
+    readVd = open(pathVd, O_CREAT | O_APPEND | O_WRONLY, 0644);
     write(readVd, v, sizeof(struct venda));
     close(readVd);
 }

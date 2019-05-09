@@ -9,6 +9,9 @@ void help() {
 	printf("i <nome> <preço>        -> Insere artigo\n");
 	printf("n <código> <novo nome>  -> Altera nome\n");
 	printf("p <código> <novo preço> -> Altera preço\n");
+    printf("f <código>              -> Procura artigo\n");
+	printf("a                       -> Agregador\n");
+	printf("v                       -> Apresenta vendas\n");
 	printf("s                       -> Apresenta artigos\n\n");
 }
 
@@ -68,9 +71,18 @@ void show_artigo(char* buf) {
     free(a);
 }
 
+void call_agreg() {
+    char s[7];
+    sprintf(s, "agreg\n");
+    // send agreg to server
+    int server = open("server", O_WRONLY, 0644);
+    write(server, s, strlen(s));
+    close(server);
+}
+
 int main (int argc, char* argv[]) {
     int n = 1; char *token, opt; 
-    char buf[1024];
+    char buf[85];
 
     artigos = open(pathA, O_CREAT, 0644);
     close(artigos);
@@ -80,7 +92,7 @@ int main (int argc, char* argv[]) {
     while (n > 0) {
         
         write(1, PROMPT, PSIZE);
-        while((n = readln(0, buf, 1024)) == -1);
+        while((n = readln(0, buf, 85)) == -1);
         if (n > 0) {
             token = strtok(buf, DELIM);
             opt = *token;
@@ -98,7 +110,7 @@ int main (int argc, char* argv[]) {
                     break;
             case 'f': show_artigo(buf);
                     break;
-            case 'a': agregador();
+            case 'a': call_agreg();
                     break;
             case '?': help();
                     break;

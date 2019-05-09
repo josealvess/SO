@@ -40,6 +40,7 @@ typedef struct agreg {
 } *Agreg;
 
 ssize_t readln (int fildes, void *buf, size_t nbyte);
+int read_client (int *input, char *buf);
 
 //Artigos
 Artg init_artigo();

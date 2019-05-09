@@ -21,25 +21,25 @@ void agrega (Venda v, Agreg a) {
     if (v->agreg == 0) {
         Agreg aux = a;
         if (aux == NULL) {
-            printf("entrei art %d\n", v->art);
+            //printf("entrei art %d\n", v->art);
             agregado = init_agreg();
             aux = agregado;
             aux->art = v->art;
             aux->qtd += v->qtd;
             aux->preco += v->preco;
-            printf("asdfgaedfghjklkjhgfdsadfgh\n");
+            //printf("asdfgaedfghjklkjhgfdsadfgh\n");
         } else if (aux->art == v->art) {
             aux->qtd += v->qtd;
             aux->preco += v->preco;
         } else {
             while ((aux != NULL) && (aux->art != v->art)) {
-                printf("batata %d\n", v->art); 
+                //printf("batata %d\n", v->art); 
                 aux = aux->prox;
                 agrega(v, aux);
             }
         }
         v->agreg = 1;
-        //update_venda (v);    
+        update_venda (v);    
     }
 }
 
@@ -49,27 +49,32 @@ void vendas () {
     lseek(readAg, 0, SEEK_SET); 
     Agreg aux = agregado;
     while ((n = read(readAg, v, sizeof(struct venda)))) {
-        agrega(v, aux);
+        if (v->art != 0)
+            agrega(v, aux);
         lseek(readAg, 0, SEEK_CUR);
     }
     close(readAg);
     free(v);
 }
 
-void agregador () {
-
-    time_t t = time(NULL);
+void file_agreg() {
+    time_t t = time(NULL); char str[128];
     struct tm tm = *localtime(&t);
     sprintf(filename, "files/%d-%d-%dT%d:%d:%d.txt", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
     printf("%s\n", filename);
-
-    //agreg = open(filename, O_CREAT, 0777);
-    //close(agreg);
-  
-    vendas();
-
+    agreg = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
     Agreg aux = agregado;
-    while (aux)
-        printf("Art: %d - Qtd: - %d Preco: %f\n", aux->art, aux->qtd, aux->preco);
+    while (aux) {
+        sprintf(str, "Artigo: %d - Qtd: %d - Preço: %f\n", aux->art, aux->qtd, aux->preco);
+        write(agreg, str, strlen(str));
+        aux = aux->prox;
+    }
+    close(agreg);
+}
+
+void agregador () {
+
+    vendas();
+    file_agreg();
 
 }

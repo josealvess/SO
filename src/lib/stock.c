@@ -11,7 +11,7 @@ Stock init_stock() {
 }
 
 void add_stock (Stock s) {
-    readSt = open(pathSt, O_RDWR, 0644);
+    readSt = open(pathSt, O_CREAT | O_RDWR, 0644);
     lseek(readSt, (s->art-1) * sizeof(struct stock), SEEK_SET);
     write(readSt, s, sizeof(struct stock));
     close(readSt);
