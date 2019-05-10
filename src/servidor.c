@@ -73,7 +73,7 @@ int main (int argc, char* argv[]) {
     while (1) {
         while((n = read(get_client, buf1, 85)) == -1);
         if (n > 0) {
-            printf("%s\n", buf1);
+            //printf("%s\n", buf1);
             if (strcmp(buf1, "agreg\n") == 0) { 
                 agregador();
             } else if ((input_size = read_client(input, buf1)) == 2) {
