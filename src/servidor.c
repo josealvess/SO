@@ -7,9 +7,11 @@ void adiciona_venda (int art, int qtd_stock, int qtd_venda) {
     Artg a = search_artigo (art); 
     Venda v = init_venda();
     v->art = art;
-    if ((qtd_stock + qtd_venda) < 0) v->qtd = qtd_stock; 
-    else v->qtd = abs(qtd_venda);
-    v->preco = v->qtd  * a->preco;
+    printf("Stock -> %d Venda -> %d\n", qtd_stock, qtd_venda);
+    int total = qtd_stock + qtd_venda;
+    printf("Total %d\n", total);
+    (total < 0) ? (v->qtd = qtd_stock) : (v->qtd = abs(qtd_venda));
+    v->preco = v->qtd * a->preco;
     add_venda(v);
     free(v);
     free(a); 
@@ -26,10 +28,9 @@ void adicionar_stock (int cod, int qtd) {
         } 
         free(a);
     } else {
-        if ((s->qtd + qtd) < 0) s->qtd = 0; 
-        else s->qtd += qtd;
         if (qtd < 0)
             adiciona_venda(s->art, s->qtd, qtd);
+        ((s->qtd + qtd) < 0) ? (s->qtd = 0) : (s->qtd += qtd);
         add_stock(s);
     }
     char out[128];
