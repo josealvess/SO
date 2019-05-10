@@ -29,12 +29,13 @@ int main (int argc, char* argv[]) {
         if( buf1[0] != '\n' ) {
             in = strdup(buf1);
             input_size = read_client(input, buf1);
-            switch (input_size) {
+            write(s_write, in, n);
+            /*switch (input_size) {
                 case 1: write(s_write, in, n);
                         break;
-                default: write(server, in, n);
+                default: write(s_write, in, n);
                         break;                
-            } 
+            } */
         }
         buf1[0] = 0;
         // read from server

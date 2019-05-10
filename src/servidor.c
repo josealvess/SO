@@ -63,11 +63,11 @@ int main (int argc, char* argv[]) {
         if (n > 0) {
             if (strcmp(buf1, "agreg\n") == 0) { 
                 agregador();
-            } else if ((input_size = read_client(input, buf1)) == 2) {
+            } /*else if ((input_size = read_client(input, buf1)) == 2) {
                 cl_write = open(swrite, O_RDWR, 0644);
                 adicionar_stock(input[0], input[1]);
                 close(cl_write);
-            } else {
+            }*/ else {
                 pid_t pid_cl = atoi(buf1);
                 sprintf(sread, "w%d", pid_cl);
                 sprintf(swrite, "r%d", pid_cl);
@@ -80,6 +80,8 @@ int main (int argc, char* argv[]) {
                         input_size = read_client(input, buf2);
                         switch (input_size) {
                             case 1: show_stock(input[0]);
+                                    break;
+                            case 2: adicionar_stock(input[0], input[1]);
                                     break;
                             default: 
                                     break;                
