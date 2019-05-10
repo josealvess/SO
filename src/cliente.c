@@ -4,7 +4,7 @@ int main (int argc, char* argv[]) {
 
     char sread[85], swrite[85];
     int n = 1, m, input_size, input[2];
-	char buf[85];
+	char buf1[85], buf2[85];
     char fifo[85], *in;
     // get pid
     int pid_cl = getpid();
@@ -25,10 +25,10 @@ int main (int argc, char* argv[]) {
 	while( n > 0 ) {
         // write to server
         write(1, PROMPT, PSIZE);
-        n = read(0, buf, 85);
-        if( buf[0] != '\n' ) {
-            in = strdup(buf);
-            input_size = read_client(input, buf);
+        n = read(0, buf1, 85);
+        if( buf1[0] != '\n' ) {
+            in = strdup(buf1);
+            input_size = read_client(input, buf1);
             switch (input_size) {
                 case 1: write(s_write, in, n);
                         break;
@@ -36,11 +36,11 @@ int main (int argc, char* argv[]) {
                         break;                
             } 
         }
+        buf1[0] = 0;
         // read from server
-        m = read(s_read, buf, 85);
-        if (m > 0) {
-            write(1, buf, m);
-        }
+        m = read(s_read, buf2, 85);
+        write(1, buf2, m);
+        buf2[0] = 0;
 	}
 
     close(server); close(s_write); close(s_read);
