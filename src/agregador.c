@@ -9,7 +9,6 @@ void agrega(Venda v) {
     Venda vd = init_venda(); int n, found = 0;
     int f = open("files/agregador", O_CREAT | O_RDWR | O_APPEND, 0644);
     while ((n = read(f, vd, sizeof(struct venda))) && !found) {
-        printf("N -> %d\n", n);
         if (vd->art == v->art) {
             printf("Artigo -> %d\n", vd->art);
             vd->qtd += v->qtd;
@@ -19,13 +18,12 @@ void agrega(Venda v) {
             found = 1;
         } 
     }
-    printf("n -> %d\n", n);
     if (n == 0) {
         lseek(f, (vd->art-1) * sizeof(struct venda), SEEK_SET);
         write(f, v, sizeof(struct venda));
     }
     v->agreg = 1;
-    //update_venda(v);
+    update_venda(v);
 }
 
 void vendas () {
@@ -33,6 +31,7 @@ void vendas () {
     readAg = open(pathAg, O_RDONLY, 0644);
     lseek(readAg, 0, SEEK_SET); 
     while ((n = read(readAg, v, sizeof(struct venda)))) {
+        printf("Agreg -> %d\n", v->agreg);
         if (v->agreg == 0)
             agrega(v);
         lseek(readAg, 0, SEEK_CUR);

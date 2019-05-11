@@ -51,7 +51,13 @@ void show_stock(int cod) {
     free(a);
 }
 
+void handler(int sig) {
+    wait(NULL);
+}
+
 int main (int argc, char* argv[]) {
+    
+    signal(SIGCHLD, handler);
 
     mkfifo("wserver", 0666);
     int read_from_client = open("wserver", O_RDONLY, 0644);
@@ -63,8 +69,8 @@ int main (int argc, char* argv[]) {
 
     while (1) {
         while((n = read(read_from_client, c, sizeof(struct cmd))) == -1);
-        write(write_to_client, &r, sizeof(int));
         if (n > 0) {
+            write(write_to_client, &r, sizeof(int));
             if (c->type == 5) { 
                 printf("Agregador\n");
                 agregador();
@@ -81,7 +87,7 @@ int main (int argc, char* argv[]) {
                 if (pid_cl == 0) {
                     cl_read = open(sread, O_RDONLY, 0644);
                     cl_write = open(swrite, O_RDWR, 0644);
-                    while((n = read(cl_read, c, sizeof(struct cmd)))) {
+                    while((n = read(cl_read, c, sizeof(struct cmd))) && (c->type  != -1)) {
                         if (c->type == 1) 
                             show_stock(c->art);
                     }
