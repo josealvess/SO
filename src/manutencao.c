@@ -1,7 +1,7 @@
 #include "../include/head.h"
 
 char* pathA = "files/artigos";
-char* pathS = "files/strings.txt";
+char* pathS = "files/strings";
 int artigos;
 int strings;
 
@@ -72,12 +72,13 @@ void show_artigo(char* buf) {
 }
 
 void call_agreg() {
-    char s[7];
-    sprintf(s, "agreg\n");
+    Command c = init_command();
+    c->type = 5;
     // send agreg to server
-    int server = open("server", O_WRONLY, 0644);
-    write(server, s, strlen(s));
+    int server = open("wserver", O_WRONLY, 0644);
+    write(server, c, sizeof(struct cmd));
     close(server);
+    free(c);
 }
 
 int main (int argc, char* argv[]) {

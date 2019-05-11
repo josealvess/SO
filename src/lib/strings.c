@@ -1,6 +1,6 @@
 #include "../../include/head.h"
 
-char* pathSr = "files/strings.txt";
+char* pathSr = "files/strings";
 int readS;
 int writeS;
 

@@ -26,18 +26,19 @@ typedef struct stock {
 } *Stock;
 
 typedef struct venda {
+    int cod;
     int art;
     int qtd;
     float preco;
     int agreg;
 } *Venda;
 
-typedef struct agreg {
+typedef struct cmd {
+    int type;
     int art;
-    int qtd;
-    float preco;
-    struct agreg *prox;
-} *Agreg;
+    int pr;
+    int pid;
+} *Command;
 
 ssize_t readln (int fildes, void *buf, size_t nbyte);
 int read_client (int *input, char *buf);
@@ -61,14 +62,19 @@ void print_string();
 //Stocks
 Stock init_stock();
 void add_stock (Stock s);
+void update_stock (Stock s);
 Stock search_stock (int cod);
 void print_stock();
 //Vendas
 Venda init_venda();
+int get_num_venda();
 void add_venda (Venda s);
 void update_venda (Venda v);
+Venda get_venda (int art);
 void print_vendas();
 //agregador
 void agregador ();
+//command
+Command init_command();
 
 #endif
