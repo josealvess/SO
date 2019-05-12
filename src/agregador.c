@@ -1,5 +1,4 @@
 #include "../include/head.h"
-#include <time.h>
 
 char* pathAg = "files/vendas";
 int readAg;
@@ -10,7 +9,7 @@ void agrega(Venda v) {
     int f = open("files/agregador", O_CREAT | O_RDWR | O_APPEND, 0644);
     while ((n = read(f, vd, sizeof(struct venda))) && !found) {
         if (vd->art == v->art) {
-            printf("Artigo -> %d\n", vd->art);
+            //printf("Artigo -> %d\n", vd->art);
             vd->qtd += v->qtd;
             vd->preco += v->preco;
             lseek(f, (vd->art-1) * sizeof(struct venda), SEEK_SET);
@@ -24,42 +23,36 @@ void agrega(Venda v) {
     }
     v->agreg = 1;
     update_venda(v);
-}
-
-void vendas () {
-    int n; Venda v = init_venda();
-    readAg = open(pathAg, O_RDONLY, 0644);
-    lseek(readAg, 0, SEEK_SET); 
-    while ((n = read(readAg, v, sizeof(struct venda)))) {
-        printf("Agreg -> %d\n", v->agreg);
-        if (v->agreg == 0)
-            agrega(v);
-        lseek(readAg, 0, SEEK_CUR);
-    }
-    close(readAg);
-    free(v);
+    free(vd);
 }
 
 void file_agreg() {
-    char filename[128]; Venda v = init_venda();
-    time_t t = time(NULL); char str[128];
-    struct tm tm = *localtime(&t); int n;
-    sprintf(filename, "files/%d-%d-%dT%d:%d:%d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-    printf("%s\n", filename);
-    agreg = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-    readAg = open(pathAg, O_RDONLY, 0644);
-    while ((n = read(readAg, v, sizeof(struct venda)))) {
+    Venda v = init_venda();
+    char str[85]; int n;
+    agreg = open("files/agregador", O_RDONLY, 0644);
+    while ((n = read(agreg, v, sizeof(struct venda)))) {
         sprintf(str, "Artigo: %d - Qtd: %d - Preço: %f\n", v->art, v->qtd, v->preco);
-        write(agreg, str, strlen(str));
-        lseek(readAg, 0, SEEK_CUR);
+        write(1, str, strlen(str));
+        lseek(agreg, 0, SEEK_CUR);
     }
     close(agreg);
+    free(v);
 }
 
-void agregador () {
+int main (int argc, char* argv[])  {
 
-    vendas();
-    file_agreg();
+    int n = 1; Venda v = init_venda();
+
+    int vendas = open("files/vendas", O_RDONLY, 0644);
+    while((n = read(vendas, v, sizeof(struct venda))) == -1) {
+            print_venda (v->cod);
+            //agrega(v);
+        // processar agregação
+        //file_agreg();
+	}
     system("rm files/agregador");
+    free(v);
+
+    return 0;
 
 }

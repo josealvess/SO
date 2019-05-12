@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define PROMPT "> "
 #define PSIZE 3
@@ -72,9 +73,11 @@ int get_num_venda();
 void add_venda (Venda s);
 void update_venda (Venda v);
 Venda get_venda (int art);
+void print_venda (int cod);
 void print_vendas();
 //agregador
 void agregador ();
+void file_agreg();
 //command
 Command init_command();
 

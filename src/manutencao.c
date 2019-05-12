@@ -74,7 +74,6 @@ void show_artigo(char* buf) {
 void call_agreg() {
     Command c = init_command();
     c->type = 5;
-    // send agreg to server
     int server = open("wserver", O_WRONLY, 0644);
     write(server, c, sizeof(struct cmd));
     close(server);

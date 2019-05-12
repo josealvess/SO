@@ -33,14 +33,14 @@ void adicionar_stock (int cod, int qtd) {
         ((s->qtd + qtd) < 0) ? (s->qtd = 0) : (s->qtd += qtd);
         update_stock(s);
     }
-    char out[128];
+    char out[85];
     sprintf(out, "Novo Stock -> %d\n", s->qtd);
     write(cl_write, out, strlen(out));
     free(s);
 }
 
 void show_stock(int cod) {
-    char out[128]; strcpy(out, "Artigo não existe\n"); 
+    char out[85]; strcpy(out, "Artigo não existe\n"); 
     Artg a = search_artigo (cod);   
     if (a->cod != 0 ){ 
         Stock s = search_stock (a->cod); 
@@ -49,6 +49,25 @@ void show_stock(int cod) {
     }
     write(cl_write, out, strlen(out));
     free(a);
+}
+
+void agrega () {
+    char filename[85];
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    sprintf(filename, "files/%d-%d-%dT%d:%d:%d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    // replace standard input with input file
+    int vendas = open("files/vendas", O_RDONLY, 0644);
+    dup2(vendas, 0);
+    // replace standard output with output file
+    int agr = open(filename, O_CREAT | O_RDWR | O_APPEND, 0644);
+    dup2(agr, 1);
+    // close unused file descriptors
+    close(vendas);
+    close(agr);
+    // execute
+    execlp("./ag", "./ag", NULL);
+    _exit(-1);
 }
 
 void handler(int sig) {
@@ -67,13 +86,16 @@ int main (int argc, char* argv[]) {
 	Command c = init_command();
     int n, r = 1;
 
-    while (1) {
+    while ( 1 ) {
         while((n = read(read_from_client, c, sizeof(struct cmd))) == -1);
         if (n > 0) {
             write(write_to_client, &r, sizeof(int));
             if (c->type == 5) { 
-                printf("Agregador\n");
-                agregador();
+                if (fork() == 0) {
+                    printf("Agregador\n");
+                    agrega();
+                    _exit(-1);
+                }
             } else if (c->type == 2) {
                 sprintf(swrite, "r%d", c->pid);
                 cl_write = open(swrite, O_RDWR, 0644);
@@ -87,7 +109,7 @@ int main (int argc, char* argv[]) {
                 if (pid_cl == 0) {
                     cl_read = open(sread, O_RDONLY, 0644);
                     cl_write = open(swrite, O_RDWR, 0644);
-                    while((n = read(cl_read, c, sizeof(struct cmd))) && (c->type  != -1)) {
+                    while((n = read(cl_read, c, sizeof(struct cmd))) && (c->type != -1)) {
                         if (c->type == 1) 
                             show_stock(c->art);
                     }

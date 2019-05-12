@@ -48,6 +48,15 @@ Venda get_venda (int cod) {
     return v;
 }
 
+void print_venda (int cod) {
+    Venda v = init_venda();
+    readVd = open(pathVd, O_RDONLY, 0644);
+    lseek(readVd, (v->cod-1) * sizeof(struct venda), SEEK_SET);
+    read(readVd, v, sizeof(struct venda));
+    printf("Cod: %d - Artigo: %d - Qtd: %d - Preço: %f - Agreg: %d\n", v->cod, v->art, v->qtd, v->preco, v->agreg);
+    close(readVd);
+}
+
 void print_vendas() {
     int n; Venda v = init_venda();
     readVd = open(pathVd, O_RDONLY, 0644);
