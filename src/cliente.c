@@ -15,8 +15,6 @@ int main (int argc, char* argv[]) {
 
     int read_from_server = open("rserver", O_RDONLY, 0644);
     while(read(read_from_server, &r, sizeof(int)) == -1) sleep(1);
-    //char s[14] = "connected...\n";
-    //write(1, s, strlen(s));
     // Create read/write pipes
         // write
         sprintf(swrite, "w%d", c->pid);
@@ -27,10 +25,9 @@ int main (int argc, char* argv[]) {
         mkfifo(sread, 0666);
         int s_read = open(sread, O_RDONLY, 0644);
 
-	while( n > 0 ) {
-        // write to server
-        write(1, PROMPT, PSIZE);
-        while((n = readln(0, buf, 85)) == -1);
+    // write to server
+    write(1, PROMPT, PSIZE);
+    while((n = readln(0, buf, 85))) {
         if( buf[0] != '\n' ) {
             input_size = read_client(input, buf);
             if (input_size == 1) {
@@ -41,7 +38,7 @@ int main (int argc, char* argv[]) {
                 c->type = 2;
                 c->art = input[0];
                 c->pr = input[1];
-                write(write_to_server, c, sizeof(struct cmd));
+                while(write(write_to_server, c, sizeof(struct cmd)) == -1) sleep(1);
             }
         }
         buf[0] = 0;
@@ -50,6 +47,8 @@ int main (int argc, char* argv[]) {
         if (m > 0)
             write(1, buf, m);
         buf[0] = 0;
+
+        write(1, PROMPT, PSIZE);
 	}
 
     c->type = -1;

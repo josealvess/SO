@@ -89,10 +89,8 @@ int main (int argc, char* argv[]) {
     strings = open(pathS, O_CREAT, 0644);
     close(strings);
 
-    while (n > 0) {
-        
-        write(1, PROMPT, PSIZE);
-        while((n = readln(0, buf, 85)) == -1);
+    write(1, PROMPT, PSIZE);
+    while((n = readln(0, buf, 85))) {
         if (n > 0) {
             token = strtok(buf, DELIM);
             opt = *token;
@@ -117,6 +115,7 @@ int main (int argc, char* argv[]) {
             default: 
                     break;
         }
+        write(1, PROMPT, PSIZE);
     }
 
     return 0;

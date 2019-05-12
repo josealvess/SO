@@ -69,6 +69,7 @@ Stock search_stock (int cod);
 void print_stock();
 //Vendas
 Venda init_venda();
+Venda str_to_venda (char* str);
 int get_num_venda();
 void add_venda (Venda s);
 void update_venda (Venda v);
