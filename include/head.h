@@ -42,6 +42,12 @@ typedef struct cmd {
     int pid;
 } *Command;
 
+typedef struct reply {
+    int type;
+    int qtd;
+    float pr;
+} *Reply;
+
 ssize_t readln (int fildes, void *buf, size_t nbyte);
 int read_client (int *input, char *buf);
 
@@ -81,5 +87,6 @@ void agregador ();
 void file_agreg();
 //command
 Command init_command();
+Reply init_reply();
 
 #endif

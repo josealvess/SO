@@ -33,22 +33,22 @@ void adicionar_stock (int cod, int qtd) {
         ((s->qtd + qtd) < 0) ? (s->qtd = 0) : (s->qtd += qtd);
         update_stock(s);
     }
-    char out[85];
-    sprintf(out, "Novo Stock -> %d\n", s->qtd);
-    write(cl_write, out, strlen(out));
+    Reply r = init_reply();
+    r->type = 1; r->qtd = s->qtd;
+    write(cl_write, r, sizeof(struct reply));
     free(s);
+    free(r);
 }
 
 void show_stock(int cod) {
-    char out[85]; strcpy(out, "Artigo não existe\n"); 
-    Artg a = search_artigo (cod);   
+    Artg a = search_artigo (cod); Reply r = init_reply();
     if (a->cod != 0 ){ 
         Stock s = search_stock (a->cod); 
-        sprintf(out, "Stock -> %d Preco -> %f\n", s->qtd, a->preco);
+        r->type = 2; r->qtd = s->qtd; r->pr = a->preco;
         free(s);
     }
-    write(cl_write, out, strlen(out));
-    free(a);
+    write(cl_write, r, sizeof(struct reply));
+    free(a); free(r);
 }
 
 void agrega () {
@@ -78,9 +78,9 @@ int main (int argc, char* argv[]) {
     
     signal(SIGCHLD, handler);
 
-    mkfifo("wserver", 0666);
+    mkfifo("wserver", 0666); 
     int read_from_client = open("wserver", O_RDONLY, 0644);
-    mkfifo("rserver", 0666);
+    mkfifo("rserver", 0666); 
     int write_to_client = open("rserver", O_RDWR, 0644);
     char sread[85]; char swrite[85];
 	Command c = init_command();
@@ -122,8 +122,9 @@ int main (int argc, char* argv[]) {
     }
 
     free(c);
+    unlink("wserver");
+    unlink("rserver");
     close(read_from_client); close(write_to_client);
-    unlink("server");
 
     return 0;
 }

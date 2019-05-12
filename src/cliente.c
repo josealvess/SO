@@ -7,7 +7,7 @@ int main (int argc, char* argv[]) {
 	char buf[85]; int r = 0;
     // get pid
     int pid_cl = getpid();
-    Command c = init_command();
+    Command c = init_command(); Reply rp = init_reply();
     c->pid = pid_cl;
     // send pid to server
     int write_to_server = open("wserver", O_WRONLY, 0644);
@@ -38,15 +38,23 @@ int main (int argc, char* argv[]) {
                 c->type = 2;
                 c->art = input[0];
                 c->pr = input[1];
-                while(write(write_to_server, c, sizeof(struct cmd)) == -1) sleep(1);
+                write(write_to_server, c, sizeof(struct cmd));
+                while(read(read_from_server, &r, sizeof(int)) == -1) sleep(1);
             }
         }
         buf[0] = 0;
         // read from server
-        m = read(s_read, buf, 85);
-        if (m > 0)
-            write(1, buf, m);
-        buf[0] = 0;
+        m = read(s_read, rp, sizeof(struct reply));
+        if (m > 0) {
+            sprintf(buf, "");
+            if (rp->type == 1) {
+                sprintf(buf, "Novo Stock -> %d\n", rp->qtd);
+            } else if (rp->type == 2) {
+                sprintf(buf, "Stock -> %d Preco -> %f\n", rp->qtd, rp->pr);
+            }
+            write(1, buf, strlen(buf));
+            buf[0] = 0;
+        }
 
         write(1, PROMPT, PSIZE);
 	}
@@ -54,7 +62,7 @@ int main (int argc, char* argv[]) {
     c->type = -1;
     write(s_write, c, sizeof(struct cmd));
 
-    free(c);
+    free(c); free(rp);
     close(write_to_server); close(read_from_server); close(s_write); close(s_read);
     unlink(swrite); unlink(sread);
 

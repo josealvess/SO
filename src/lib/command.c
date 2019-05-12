@@ -19,3 +19,11 @@ Command init_command() {
     return c;
 }
 
+Reply init_reply() {
+    Reply r = (Reply) malloc (sizeof(struct reply));
+    r->type = 0;
+    r->qtd = 0;
+    r->pr = 0;
+    return r;
+}
+
