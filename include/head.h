@@ -48,6 +48,11 @@ typedef struct reply {
     float pr;
 } *Reply;
 
+typedef struct comp {
+    int n_art;
+    int n_nome;
+} *Comp;
+
 ssize_t readln (int fildes, void *buf, size_t nbyte);
 int read_client (int *input, char *buf);
 
@@ -88,5 +93,9 @@ void file_agreg();
 //command
 Command init_command();
 Reply init_reply();
+//compacta
+void test_log_size();
+void add_art_comp();
+void add_str_comp();
 
 #endif

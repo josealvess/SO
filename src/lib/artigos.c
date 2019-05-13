@@ -11,15 +11,6 @@ Artg init_artigo() {
     a->preco = 0;
     return a;
 }
-/*
-Artg art_to_struct (char* s) {
-    Artg a = (Artg) malloc (sizeof(struct artg));
-    char *token;
-	token = strtok(str, DELIM);
-    token = strtok(NULL, DELIM);
-    a->nome = 
-
-}*/
 
 int get_num_art () {
     int cod = 1, n;

@@ -27,6 +27,7 @@ void add_artigo (char* buf) {
     a->nome = id; 
     a->preco = atof(strtok(NULL, DELIM));
     artigo_to_file(a); 
+    add_art_comp();
     free(a);
     sprintf(str, "Artigo -> %d\n", a->cod);
     write(1, str, strlen(str));
@@ -43,6 +44,7 @@ void alt_nome (char* buf) {
         string_to_file(nome);
         a->nome = id;
         mod_art(a);
+        add_str_comp();
     } else
         write(1, out, strlen(out));
     free(a);
@@ -115,6 +117,7 @@ int main (int argc, char* argv[]) {
             default: 
                     break;
         }
+        test_log_size();
         write(1, PROMPT, PSIZE);
     }
 

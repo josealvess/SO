@@ -14,7 +14,7 @@ int main (int argc, char* argv[]) {
     write(write_to_server, c, sizeof(struct cmd));
 
     int read_from_server = open("rserver", O_RDONLY, 0644);
-    while(read(read_from_server, &r, sizeof(int)) == -1) sleep(1);
+    while(read(read_from_server, rp, sizeof(struct reply)) == -1) sleep(1);
     // Create read/write pipes
         // write
         sprintf(swrite, "w%d", c->pid);

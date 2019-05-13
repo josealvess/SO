@@ -3,6 +3,24 @@
 int cl_read;
 int cl_write;
 
+pid_t pub = 0;
+pid_t cli = 0;
+
+void sig_term_handler(int signum) {
+    kill(cli, SIGUSR1);
+    kill(pub, SIGUSR1);
+}
+
+void catch_sigterm() {
+    static struct sigaction sigact;
+
+    memset(&sigact, 0, sizeof(struct sigaction));
+    sigact.sa_handler = sig_term_handler;
+
+    sigaction(SIGTERM, &sigact, NULL);
+}
+
+
 void adiciona_venda (int art, int qtd_stock, int qtd_venda) {
     Artg a = search_artigo (art); 
     Venda v = init_venda();
@@ -76,20 +94,22 @@ void handler(int sig) {
 
 int main (int argc, char* argv[]) {
     
-    signal(SIGCHLD, handler);
+    catch_sigterm(); // mata servidor
+    signal(SIGCHLD, handler); // previne zombies
 
     mkfifo("wserver", 0666); 
     int read_from_client = open("wserver", O_RDONLY, 0644);
     mkfifo("rserver", 0666); 
     int write_to_client = open("rserver", O_RDWR, 0644);
     char sread[85]; char swrite[85];
-	Command c = init_command();
-    int n, r = 1;
+	Command c = init_command();  Reply r = init_reply();
+    int n;
 
     while ( 1 ) {
         while((n = read(read_from_client, c, sizeof(struct cmd))) == -1);
         if (n > 0) {
-            write(write_to_client, &r, sizeof(int));
+            pub = getpid();
+            write(write_to_client, r, sizeof(struct reply));
             if (c->type == 5) { 
                 if (fork() == 0) {
                     printf("Agregador\n");
@@ -102,11 +122,12 @@ int main (int argc, char* argv[]) {
                 adicionar_stock(c->art, c->pr);
                 close(cl_write);
             } else {
-                pid_t pid_cl = c->pid;
+                int pid_cl = c->pid;
                 sprintf(sread, "w%d", pid_cl);
                 sprintf(swrite, "r%d", pid_cl);
                 pid_cl = fork();
                 if (pid_cl == 0) {
+                    cli = pid_cl;
                     cl_read = open(sread, O_RDONLY, 0644);
                     cl_write = open(swrite, O_RDWR, 0644);
                     while((n = read(cl_read, c, sizeof(struct cmd))) && (c->type != -1)) {
